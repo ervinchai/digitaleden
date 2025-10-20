@@ -8,51 +8,35 @@
       <div class="mx-auto grid w-[350px] gap-6">
         <div class="grid gap-2 text-center">
           <h1 class="text-3xl font-bold">
-            Sign Up
+            Reset Password
           </h1>
           <p class="text-balance text-muted-foreground">
-            Enter your information to create an account
+            Enter your new password below.
           </p>
         </div>
-        <form class="grid gap-4" @submit.prevent="signup">
+        <form class="grid gap-4" @submit.prevent="resetPassword">
+          <input type="hidden" v-model="form.reset_password_token" />
           <div class="grid gap-2">
-            <Label for="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              required
-              v-model="form.email"
-            />
-            <p v-if="$page.props.errors.email" class="text-sm text-red-500">{{ $page.props.errors.email[0] }}</p>
-          </div>
-          <div class="grid gap-2">
-            <Label for="password">Password</Label>
+            <Label for="password">New Password</Label>
             <Input id="password" type="password" required v-model="form.password" />
             <p v-if="$page.props.errors.password" class="text-sm text-red-500">{{ $page.props.errors.password[0] }}</p>
           </div>
           <div class="grid gap-2">
-            <Label for="password-confirmation">Password Confirmation</Label>
+            <Label for="password-confirmation">Confirm New Password</Label>
             <Input id="password-confirmation" type="password" required v-model="form.password_confirmation" />
             <p v-if="$page.props.errors.password_confirmation" class="text-sm text-red-500">{{ $page.props.errors.password_confirmation[0] }}</p>
           </div>
-          <Button variant="default" type="submit" class="w-full">
-            Sign Up
+          <Button type="submit" class="w-full">
+            Reset Password
           </Button>
         </form>
-        <div class="mt-4 text-center text-sm">
-          Already have an account?
-          <a href="/users/sign_in" class="underline">
-            Login
-          </a>
-        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { reactive } from 'vue'
+import { reactive, onMounted } from 'vue'
 import { router } from '@inertiajs/vue3'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -61,17 +45,22 @@ import FlashMessages from '@/components/FlashMessages.vue'
 import ThemeToggler from '@/components/ThemeToggler.vue'
 
 const form = reactive({
-  email: '',
   password: '',
-  password_confirmation: ''
+  password_confirmation: '',
+  reset_password_token: ''
 })
 
-function signup() {
-  router.post('/users', {
+onMounted(() => {
+  const urlParams = new URLSearchParams(window.location.search)
+  form.reset_password_token = urlParams.get('reset_password_token')
+})
+
+function resetPassword() {
+  router.put('/users/password', {
     user: {
-      email: form.email,
       password: form.password,
-      password_confirmation: form.password_confirmation
+      password_confirmation: form.password_confirmation,
+      reset_password_token: form.reset_password_token
     }
   })
 }

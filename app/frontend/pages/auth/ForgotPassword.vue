@@ -8,13 +8,13 @@
       <div class="mx-auto grid w-[350px] gap-6">
         <div class="grid gap-2 text-center">
           <h1 class="text-3xl font-bold">
-            Login
+            Forgot Password
           </h1>
           <p class="text-balance text-muted-foreground">
-            Enter your email below to login to your account
+            Enter your email and we'll send you a link to reset your password.
           </p>
         </div>
-        <form class="grid gap-4" @submit.prevent="login">
+        <form class="grid gap-4" @submit.prevent="sendResetLink">
           <div class="grid gap-2">
             <Label for="email">Email</Label>
             <Input
@@ -24,30 +24,12 @@
               required
               v-model="form.email"
             />
-            <p v-if="$page.props.errors.email" class="text-sm text-red-500">{{ $page.props.errors.email }}</p>
-          </div>
-          <div class="grid gap-2">
-            <div class="flex items-center">
-              <Label for="password">Password</Label>
-              <a
-                href="/users/password/new"
-                class="ml-auto inline-block text-sm underline"
-              >
-                Forgot your password?
-              </a>
-            </div>
-            <Input id="password" type="password" required v-model="form.password" />
+            <p v-if="$page.props.errors.email" class="text-sm text-red-500">{{ $page.props.errors.email[0] }}</p>
           </div>
           <Button type="submit" class="w-full">
-            Login
+            Send reset link
           </Button>
         </form>
-        <div class="mt-4 text-center text-sm">
-          Don't have an account?
-          <a href="/users/sign_up" class="underline">
-            Sign up
-          </a>
-        </div>
       </div>
     </div>
   </div>
@@ -63,15 +45,13 @@ import FlashMessages from '@/components/FlashMessages.vue'
 import ThemeToggler from '@/components/ThemeToggler.vue'
 
 const form = reactive({
-  email: '',
-  password: ''
+  email: ''
 })
 
-function login() {
-  router.post('/users/sign_in', {
+function sendResetLink() {
+  router.post('/users/password', {
     user: {
-      email: form.email,
-      password: form.password
+      email: form.email
     }
   })
 }
