@@ -1,0 +1,8 @@
+// The shadcn-vue CLI detects Inertia as a framework and reads path aliases in this config file.
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./app/frontend/*"]
+    }
+  }
+}
