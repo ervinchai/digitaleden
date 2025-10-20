@@ -8,6 +8,13 @@ class ApplicationController < ActionController::Base
         notice: flash.notice,
         alert: flash.alert,
       },
+      auth: {
+        user: current_user ? { email: current_user.email } : nil
+      }
     }
+  end
+
+  def after_sign_in_path_for(resource)
+    dashboard_path
   end
 end
